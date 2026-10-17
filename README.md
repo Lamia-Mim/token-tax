@@ -4,7 +4,7 @@ Language models read text as **tokens**, and you pay for every token in money, s
 Token Tax shows how many more tokens Bangla needs than English for the same meaning, across popular
 language models, live in the browser.
 
-**Live demo:** _add your deployed link here_
+**Live demo:** https://lamia-mim.github.io/token-tax/
 
 ## What it does
 
