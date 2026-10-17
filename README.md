@@ -1,0 +1,91 @@
+# Token Tax: Bangla vs English in AI
+
+Language models read text as **tokens**, and you pay for every token in money, speed and context space.
+Token Tax shows how many more tokens Bangla needs than English for the same meaning, across popular
+language models, live in the browser.
+
+**Live demo:** _add your deployed link here_
+
+## What it does
+
+- **Compare:** type or pick a Bangla sentence and its English translation. See token counts, the Bangla ÷ English ratio, and what that means for cost ("if English costs ৳100…").
+- **See the split:** watch how each tokenizer cuts Bangla into pieces, including single letters broken into raw bytes.
+- **Benchmark:** every loaded model is ranked on a set of parallel sentence pairs.
+- **Private by design:** everything runs client-side. Your text never leaves the browser.
+
+## Early findings
+
+Bangla tokens ÷ English tokens on the 8 parallel sentence pairs in [`samples.js`](samples.js) (1.0× = parity):
+
+| Tokenizer | Ratio |
+|---|---|
+| GPT-4 / GPT-3.5 (cl100k) | 5.22× |
+| Llama 3 | 5.14× |
+| Qwen 3 | 4.47× |
+| Mistral 7B (v0.3) | 4.40× |
+| Gemma 2 | 2.50× |
+| DeepSeek-V3 | 2.03× |
+| GPT-4o (o200k) | 1.52× |
+| BLOOM | 1.00× |
+
+Two takeaways: the newer OpenAI tokenizer (o200k) cuts the Bangla penalty from about 5× to about 1.5×, and BLOOM, which
+was trained with Bangla in its data, reaches parity. This is a small hand-written sample, so treat the numbers as indicative.
+
+## How it works
+
+- Tokenizers run in the browser with [tokenizers.js](https://github.com/huggingface/tokenizers.js) (about 8 kB, no dependencies).
+- `tokenizer.json` and `tokenizer_config.json` for each model are fetched from the Hugging Face Hub and stored with the Cache API, so repeat visits are fast.
+- To show readable pieces, token ids are decoded in groups. When a byte-level tokenizer splits one Bangla letter across several tokens, those tokens are merged into one block and labelled with the count.
+
+| Model | Hugging Face repo |
+|---|---|
+| GPT-4o | `Xenova/gpt-4o` |
+| GPT-4 / 3.5 | `Xenova/gpt-4` |
+| Llama 3 | `Xenova/llama3-tokenizer-new` |
+| Gemma 2 | `unsloth/gemma-2-2b` |
+| Qwen 3 | `Qwen/Qwen3-0.6B` |
+| DeepSeek-V3 | `deepseek-ai/DeepSeek-V3` |
+| Mistral 7B | `Xenova/mistral-tokenizer-v3` |
+| BLOOM | `Xenova/bloom-560m` |
+
+The OpenAI and some other entries are community conversions of the official tokenizers.
+
+## Project structure
+
+```
+token-tax/
+├── index.html   page structure
+├── style.css    design (light and dark themes)
+├── app.js       loading, tokenizing and rendering
+└── samples.js   parallel Bangla–English sentence pairs
+```
+
+No build step and no backend.
+
+## Run locally
+
+ES modules do not load from `file://`, so serve the folder with any static server:
+
+```bash
+npx serve .
+# or
+python -m http.server 8000
+```
+
+Then open the printed `localhost` address.
+
+## Deploy
+
+**GitHub Pages:** push this folder to a repository, then go to *Settings → Pages → Deploy from a branch → main / root*.
+
+**Vercel:** import the repository at vercel.com. No settings needed; it is a static site.
+
+## Roadmap
+
+- [ ] Run the full study on the FLORES-200 benchmark (1,000+ parallel sentences)
+- [ ] Add more languages from South Asia (Hindi, Urdu, Tamil) for comparison
+- [ ] Measure the effect of extending a tokenizer with Bangla tokens
+
+## Author
+
+**Lamia Islam Mim**, Dhaka, Bangladesh · [GitHub](https://github.com/Lamia-Mim) · lamiaislammim.work@gmail.com

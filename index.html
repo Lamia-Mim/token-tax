@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Token Tax — Bangla vs English in AI</title>
+  <meta name="description" content="Language models charge per token, and Bangla needs far more tokens than English for the same sentence. Paste any text and compare GPT, Llama, Gemma, Qwen and more, live in your browser.">
+  <meta property="og:title" content="Token Tax — Bangla vs English in AI">
+  <meta property="og:description" content="The same sentence in Bangla can cost several times more tokens than in English. See it for yourself.">
+  <script>
+    try { var t = localStorage.getItem("tt-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%23ff8fa3'/><stop offset='.5' stop-color='%23b69cff'/><stop offset='1' stop-color='%23ffc59a'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='%230a0a0f'/><text x='32' y='45' font-size='36' text-anchor='middle' fill='url(%23g)' font-family='sans-serif' font-weight='700'>৳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Hind+Siliguri:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top">
+    <div class="wrap top__in">
+      <a class="brand" href="#">Token<em>Tax</em></a>
+      <nav class="top__nav" aria-label="Sections">
+        <a href="#compare">Compare</a>
+        <a href="#split">See the split</a>
+        <a href="#benchmark">Benchmark</a>
+        <a href="#why">Why</a>
+      </nav>
+      <button class="icon-btn" id="theme" type="button" aria-label="Toggle light and dark theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-moon" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/><g class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero wrap">
+      <p class="eyebrow">An experiment on language fairness in AI</p>
+      <h1 class="hero__title">Speaking <span class="bn grad">বাংলা</span> to AI<br>costs <em class="grad">more</em>.</h1>
+      <p class="hero__lead">
+        Language models read text as <strong>tokens</strong>, and every token is paid for in money, speed and memory.
+        The same sentence in Bangla can need several times more tokens than in English.
+        Paste any text below and see it happen, live, in your browser.
+      </p>
+
+      <div class="hero__stats" aria-live="polite">
+        <div class="stat">
+          <span class="stat__num" id="stat-worst">—</span>
+          <span class="stat__label" id="stat-worst-label">Loading tokenizers…</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num" id="stat-best">—</span>
+          <span class="stat__label" id="stat-best-label">&nbsp;</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">230M+</span>
+          <span class="stat__label">people speak Bangla as their first language</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Models -->
+    <section class="wrap block" aria-labelledby="models-h">
+      <div class="block__head">
+        <h2 id="models-h" class="h-sm">Models</h2>
+        <p class="muted">Three load by default. Tap any other to add it. Files come from the Hugging Face Hub and are cached after the first visit.</p>
+      </div>
+      <div class="models" id="models"></div>
+    </section>
+
+    <!-- Compare -->
+    <section class="wrap block" id="compare" aria-labelledby="compare-h">
+      <div class="block__head">
+        <p class="eyebrow">01</p>
+        <h2 id="compare-h" class="h-lg">Same meaning, <em class="grad">different price</em></h2>
+        <p class="muted">Write a sentence in Bangla and its English translation, or pick a sample.</p>
+      </div>
+
+      <div class="samples" id="samples" role="group" aria-label="Sample sentences"></div>
+
+      <div class="inputs">
+        <label class="field">
+          <span class="field__label"><span class="dot dot--bn"></span>Bangla</span>
+          <textarea id="in-bn" class="bn" rows="4" maxlength="5000" spellcheck="false"></textarea>
+          <span class="field__meta" id="meta-bn"></span>
+        </label>
+        <label class="field">
+          <span class="field__label"><span class="dot dot--en"></span>English</span>
+          <textarea id="in-en" rows="4" maxlength="5000" spellcheck="false"></textarea>
+          <span class="field__meta" id="meta-en"></span>
+        </label>
+      </div>
+
+      <div class="table-wrap">
+        <table class="results" id="results">
+          <thead>
+            <tr>
+              <th scope="col">Model</th>
+              <th scope="col">Tokens</th>
+              <th scope="col" class="num">Bangla ÷ English</th>
+              <th scope="col" class="num">If English costs ৳100</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Split -->
+    <section class="wrap block" id="split" aria-labelledby="split-h">
+      <div class="block__head">
+        <p class="eyebrow">02</p>
+        <h2 id="split-h" class="h-lg">How the model <em class="grad">cuts</em> your Bangla</h2>
+        <p class="muted">Each coloured block is what the model sees as one piece. A small number means that piece needed more than one token, usually because a single Bangla letter got broken into raw bytes.</p>
+      </div>
+      <div class="tabs" id="split-tabs" role="tablist" aria-label="Choose a model"></div>
+      <div class="split-pane">
+        <div class="split-stats" id="split-stats"></div>
+        <div class="tokens bn" id="split-bn" aria-label="Bangla text split into tokens"></div>
+        <div class="tokens" id="split-en" aria-label="English text split into tokens"></div>
+      </div>
+    </section>
+
+    <!-- Benchmark -->
+    <section class="wrap block" id="benchmark" aria-labelledby="bench-h">
+      <div class="block__head">
+        <p class="eyebrow">03</p>
+        <h2 id="bench-h" class="h-lg">The <em class="grad">token tax</em>, ranked</h2>
+        <p class="muted">Measured live in your browser on <span id="bench-n">8</span> parallel sentence pairs written for this site. 1.0× would mean Bangla is treated as fairly as English.</p>
+      </div>
+      <div class="bench" id="bench"></div>
+      <p class="note">This is a small demo set. A larger study on the FLORES-200 benchmark is planned.</p>
+    </section>
+
+    <!-- Why -->
+    <section class="wrap block" id="why" aria-labelledby="why-h">
+      <div class="block__head">
+        <p class="eyebrow">04</p>
+        <h2 id="why-h" class="h-lg">Why it <em class="grad">matters</em></h2>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <span class="card__icon">৳</span>
+          <h3>Higher cost</h3>
+          <p>AI APIs bill per token. If a Bangla message takes 5× the tokens, a Bangladeshi startup pays 5× for the same feature.</p>
+        </article>
+        <article class="card">
+          <span class="card__icon">⏱</span>
+          <h3>Slower replies</h3>
+          <p>Models write one token at a time. More tokens for the same answer means users in Bangla wait longer.</p>
+        </article>
+        <article class="card">
+          <span class="card__icon">▤</span>
+          <h3>Less memory</h3>
+          <p>Every model has a context window measured in tokens. Bangla fills it faster, so the model can read less of your document.</p>
+        </article>
+      </div>
+
+      <div class="explain">
+        <h3 class="h-sm">Why does it happen?</h3>
+        <p>Tokenizers learn their vocabulary from training data that is mostly English. Common English words become a single token. Bangla letters are rarer in that data, and each one is 3 bytes in UTF-8, so the tokenizer often falls back to splitting a single letter like <span class="bn">ক</span> into 2 or 3 byte-tokens. Newer tokenizers with bigger, more multilingual vocabularies (compare GPT-4 with GPT-4o) close much of the gap.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot__in">
+      <p>Built by <a href="https://github.com/Lamia-Mim">Lamia Islam Mim</a> · Dhaka, Bangladesh</p>
+      <p class="muted">Runs entirely in your browser. Your text never leaves your device. Tokenizers load from the Hugging Face Hub via <a href="https://github.com/huggingface/tokenizers.js">tokenizers.js</a>; some are community conversions of the official ones.</p>
+    </div>
+  </footer>
+</body>
+</html>
