@@ -76,10 +76,11 @@ When you type your own text, the site downloads the models' tokenizers (about 23
 
 | Section | What it shows |
 |---|---|
-| **The problem in 3 steps** | One word, "language" vs "ভাষা": 1 token vs 5 tokens, and what that means for price |
+| **বাংলা / English switch** | The whole page, in Bangla or English, from the button in the header |
+| **The problem in 3 steps** | One word, "language" vs "ভাষা": 1 token vs 5 tokens, and what that means for price. Below it, type any word to see how many tokens it takes. |
 | **The calculator** | Token counts and cost for your text across all 8 models, plus a *Check it yourself* box and a CSV download of your result |
-| **Under the knife** | Each piece the model sees. A red number means one piece cost several tokens. A switch shows the actual token IDs. |
-| **The ranking** | All models ranked from least to most fair |
+| **Under the knife** | Each piece the model sees. A red number means one piece cost several tokens. A switch shows the actual token IDs, and tapping a piece shows its characters, Unicode code points and UTF-8 bytes. |
+| **The ranking** | All models ranked from least to most fair, plus a heatmap of every sentence × model to show the result is consistent |
 | **Proof & method** | How strong each claim is, how the numbers are made, which tokenizer files were used, the raw data, and earlier research |
 | **Why it matters** | Cost, speed and memory, each labelled with how well it is proven |
 | **Questions** | Plain answers: what a token is, privacy, official tokenizers, why BLOOM is fair, and more |
@@ -123,6 +124,7 @@ token-tax/
 ├── index.html              page structure
 ├── style.css               design (light and dark themes)
 ├── app.js                  loading, tokenizing and rendering
+├── i18n.js                 Bangla translations of the page
 ├── samples.js              the 8 Bangla–English sentence pairs
 ├── precomputed.js          generated results for the samples
 ├── scripts/precompute.mjs  regenerates precomputed.js
