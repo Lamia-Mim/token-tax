@@ -1,0 +1,13 @@
+{
+  "name": "token-tax-research",
+  "private": true,
+  "type": "module",
+  "description": "FLORES-200 study of Bangla vs English tokenization for the Token Tax project",
+  "scripts": {
+    "start": "node run.mjs"
+  },
+  "dependencies": {
+    "@huggingface/tokenizers": "0.2.0",
+    "js-tiktoken": "1.0.21"
+  }
+}

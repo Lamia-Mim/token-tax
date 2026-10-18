@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 432" width="760" height="432" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<style>.h{font-size:16px;font-weight:700}.s{font-size:12px;fill:#4a443c}.l{font-size:13px;font-weight:600}.v{font-size:13px;font-weight:700}.t{font-size:11px;fill:#4a443c}</style>
+<rect width="100%" height="100%" fill="#fbf8f2"/>
+<text x="20" y="28" class="h">Bangla tokens per English token, FLORES-200 devtest (n = 1012)</text>
+<text x="20" y="48" class="s">Bars: corpus ratio. Black lines: 95% bootstrap confidence interval. Dashed line: parity (1×).</text>
+<line x1="150" x2="150" y1="64" y2="392" stroke="#16130f" stroke-opacity="0.12" />
+  <text x="150" y="410" text-anchor="middle" class="t">0×</text>
+<line x1="236.66666666666666" x2="236.66666666666666" y1="64" y2="392" stroke="#16130f" stroke-opacity="0.7" stroke-dasharray="4 3"/>
+  <text x="236.66666666666666" y="410" text-anchor="middle" class="t">1×</text>
+<line x1="323.3333333333333" x2="323.3333333333333" y1="64" y2="392" stroke="#16130f" stroke-opacity="0.12" />
+  <text x="323.3333333333333" y="410" text-anchor="middle" class="t">2×</text>
+<line x1="410" x2="410" y1="64" y2="392" stroke="#16130f" stroke-opacity="0.12" />
+  <text x="410" y="410" text-anchor="middle" class="t">3×</text>
+<line x1="496.66666666666663" x2="496.66666666666663" y1="64" y2="392" stroke="#16130f" stroke-opacity="0.12" />
+  <text x="496.66666666666663" y="410" text-anchor="middle" class="t">4×</text>
+<line x1="583.3333333333334" x2="583.3333333333334" y1="64" y2="392" stroke="#16130f" stroke-opacity="0.12" />
+  <text x="583.3333333333334" y="410" text-anchor="middle" class="t">5×</text>
+<line x1="670" x2="670" y1="64" y2="392" stroke="#16130f" stroke-opacity="0.12" />
+  <text x="670" y="410" text-anchor="middle" class="t">6×</text>
+<text x="138" y="84" text-anchor="end" class="l">GPT-4 / 3.5</text>
+  <rect x="150" y="72" width="502.2406985014593" height="18" fill="#d42a20"/>
+  <line x1="646.6078547377526" x2="657.939694416578" y1="81" y2="81" stroke="#16130f" stroke-width="2"/>
+  <line x1="646.6078547377526" x2="646.6078547377526" y1="75" y2="87" stroke="#16130f" stroke-width="2"/>
+  <line x1="657.939694416578" x2="657.939694416578" y1="75" y2="87" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="85" class="v">5.80×</text>
+<text x="138" y="124" text-anchor="end" class="l">Llama 3</text>
+  <rect x="150" y="112" width="498.7025382454333" height="18" fill="#d42a20"/>
+  <line x1="643.0851396413884" x2="654.4048138074206" y1="121" y2="121" stroke="#16130f" stroke-width="2"/>
+  <line x1="643.0851396413884" x2="643.0851396413884" y1="115" y2="127" stroke="#16130f" stroke-width="2"/>
+  <line x1="654.4048138074206" x2="654.4048138074206" y1="115" y2="127" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="125" class="v">5.75×</text>
+<text x="138" y="164" text-anchor="end" class="l">Qwen 3</text>
+  <rect x="150" y="152" width="435.23164741802736" height="18" fill="#d42a20"/>
+  <line x1="579.957955262623" x2="590.4508983973216" y1="161" y2="161" stroke="#16130f" stroke-width="2"/>
+  <line x1="579.957955262623" x2="579.957955262623" y1="155" y2="167" stroke="#16130f" stroke-width="2"/>
+  <line x1="590.4508983973216" x2="590.4508983973216" y1="155" y2="167" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="165" class="v">5.02×</text>
+<text x="138" y="204" text-anchor="end" class="l">Mistral 7B</text>
+  <rect x="150" y="192" width="424.4606682890511" height="18" fill="#d42a20"/>
+  <line x1="569.2205992867571" x2="579.6883220062534" y1="201" y2="201" stroke="#16130f" stroke-width="2"/>
+  <line x1="569.2205992867571" x2="569.2205992867571" y1="195" y2="207" stroke="#16130f" stroke-width="2"/>
+  <line x1="579.6883220062534" x2="579.6883220062534" y1="195" y2="207" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="205" class="v">4.90×</text>
+<text x="138" y="244" text-anchor="end" class="l">Gemma 2</text>
+  <rect x="150" y="232" width="232.4286137002515" height="18" fill="#d42a20"/>
+  <line x1="379.82431492132514" x2="384.99549524665963" y1="241" y2="241" stroke="#16130f" stroke-width="2"/>
+  <line x1="379.82431492132514" x2="379.82431492132514" y1="235" y2="247" stroke="#16130f" stroke-width="2"/>
+  <line x1="384.99549524665963" x2="384.99549524665963" y1="235" y2="247" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="245" class="v">2.68×</text>
+<text x="138" y="284" text-anchor="end" class="l">DeepSeek-V3</text>
+  <rect x="150" y="272" width="174.4198316137224" height="18" fill="#d42a20"/>
+  <line x1="322.6628005812755" x2="326.2270202724835" y1="281" y2="281" stroke="#16130f" stroke-width="2"/>
+  <line x1="322.6628005812755" x2="322.6628005812755" y1="275" y2="287" stroke="#16130f" stroke-width="2"/>
+  <line x1="326.2270202724835" x2="326.2270202724835" y1="275" y2="287" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="285" class="v">2.01×</text>
+<text x="138" y="324" text-anchor="end" class="l">GPT-4o</text>
+  <rect x="150" y="312" width="146.72025204976495" height="18" fill="#0b6e4f"/>
+  <line x1="295.23414324578766" x2="298.21185555028774" y1="321" y2="321" stroke="#16130f" stroke-width="2"/>
+  <line x1="295.23414324578766" x2="295.23414324578766" y1="315" y2="327" stroke="#16130f" stroke-width="2"/>
+  <line x1="298.21185555028774" x2="298.21185555028774" y1="315" y2="327" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="325" class="v">1.69×</text>
+<text x="138" y="364" text-anchor="end" class="l">BLOOM</text>
+  <rect x="150" y="352" width="101.54313782705964" height="18" fill="#0b6e4f"/>
+  <line x1="250.55390571561387" x2="252.58577835167068" y1="361" y2="361" stroke="#16130f" stroke-width="2"/>
+  <line x1="250.55390571561387" x2="250.55390571561387" y1="355" y2="367" stroke="#16130f" stroke-width="2"/>
+  <line x1="252.58577835167068" x2="252.58577835167068" y1="355" y2="367" stroke="#16130f" stroke-width="2"/>
+  <text x="680" y="365" class="v">1.17×</text>
+</svg>

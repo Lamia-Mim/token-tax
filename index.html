@@ -45,7 +45,7 @@
     <section class="hero wrap">
       <div class="hero__copy">
         <p class="kicker"><span class="kicker__dot"></span><span data-i18n="hero.kicker">A study on language fairness in AI</span></p>
-        <h1 class="hero__title" data-i18n="hero.title">Speaking <span class="hero__bn">বাংলা</span> to AI can cost up to <span class="stamp" id="hero-x">5×</span> more.</h1>
+        <h1 class="hero__title" data-i18n="hero.title">Speaking <span class="hero__bn">বাংলা</span> to AI can cost over <span class="stamp" id="hero-x">5×</span> more.</h1>
         <p class="hero__lead" data-i18n="hero.lead">AI models read text in small pieces called <strong>tokens</strong>, and every token is billed. The same sentence in Bangla is cut into far more pieces than in English. That can mean paying more, waiting longer, and fitting less into the model's memory.</p>
         <div class="hero__cta">
           <a class="btn btn--red" href="#calc" data-i18n="hero.cta1">Try your own text</a>
@@ -221,7 +221,7 @@
         <p class="breakdown__desc" data-i18n="bd.desc">Each cell is Bangla ÷ English tokens for one sentence pair. If the colours in a row are similar, the result is consistent and not driven by one sentence.</p>
         <div class="heat-wrap"><table class="heat" id="heat"></table></div>
       </details>
-      <p class="fine" data-i18n="rank.fine">Small hand-written sample set. A larger study on the FLORES-200 benchmark is planned.</p>
+      <p class="fine" data-i18n="rank.fine">Small hand-written sample set. The full FLORES-200 study with 1,012 sentences gives the same ranking; see Proof &amp; method.</p>
     </section>
 
     <!-- Proof & method -->
@@ -251,6 +251,17 @@
           <h4 data-i18n="claim3.h">Slower replies and less room in the model's memory.</h4>
           <p data-i18n="claim3.p">Models write one token at a time and have token-based memory limits, so this follows from the counts. Not measured on this site yet.</p>
         </article>
+      </div>
+
+      <h3 class="sub" data-i18n="flores.sub">Checked at scale: 1,012 professional translations</h3>
+      <div class="flores">
+        <p class="flores__intro" data-i18n="flores.p">The demo sentences on this page are few and short. To test the result properly, all 8 tokenizers were run on FLORES-200, a standard research benchmark of 1,012 sentences professionally translated from English into Bangla. The ranking is the same, and the gap is slightly larger.</p>
+        <div class="rank" id="flores"></div>
+        <p class="fine" data-i18n="flores.fine">Black lines show 95% confidence intervals (10,000 bootstrap resamples). GPT counts match OpenAI's official encodings in 8,036 of 8,036 cases. The result repeats on a second set of 997 sentences.</p>
+        <div class="flores__links">
+          <a class="btn btn--red" href="https://github.com/Lamia-Mim/token-tax/tree/main/research" target="_blank" rel="noopener" data-i18n="flores.report">Read the full report</a>
+          <a class="btn btn--line" href="research/results/summary.csv" download data-i18n="flores.data">Download the results (CSV)</a>
+        </div>
       </div>
 
       <h3 class="sub" data-i18n="proof.sub2">How the numbers are made</h3>
@@ -356,8 +367,8 @@
           <p data-i18n="a5">BLOOM's tokenizer was trained on data that deliberately included Bangla and other Indic languages, so it learned whole Bangla words as pieces. It suggests the gap comes from what a tokenizer learns from, not from the language itself.</p>
         </details>
         <details>
-          <summary data-i18n="q6">Why only 8 sentences? Is that enough?</summary>
-          <p data-i18n="a6">It is enough to show the effect clearly, but not enough for a final scientific answer. A larger study using FLORES-200, a standard benchmark of 1,000+ professionally translated sentences, is planned.</p>
+          <summary data-i18n="q6">The demo has only 8 sentences. Is that enough?</summary>
+          <p data-i18n="a6">They are enough to show the effect, but not for a scientific answer. That is why the same test was also run on FLORES-200, a standard benchmark of 1,012 professionally translated sentences. It confirms the result; see "Checked at scale" in Proof &amp; method.</p>
         </details>
         <details>
           <summary data-i18n="q7">Does the ৳ figure show real prices?</summary>

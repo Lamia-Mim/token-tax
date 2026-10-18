@@ -654,7 +654,18 @@ p, dl, dd { margin: 0; }
 .heat__dark { color: var(--on-red); font-weight: 600; }
 .heat__fair { background: color-mix(in srgb, var(--green) 30%, var(--paper-3)); }
 
+/* ---------- FLORES-200 study (reuses the ranking rows) ---------- */
+.flores__intro { max-width: 780px; margin-bottom: 16px; color: var(--ink-2); }
+.flores__links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.rk__ci { position: absolute; top: 50%; left: var(--l); width: calc(var(--r) - var(--l)); height: 2px; margin-top: -1px; background: var(--ink); }
+.rk__ci::before, .rk__ci::after { content: ""; position: absolute; top: -5px; width: 2px; height: 12px; background: var(--ink); }
+.rk__ci::before { left: 0; }
+.rk__ci::after { right: 0; }
+.rk__val small { display: block; margin-top: 4px; font: 400 11px/1.3 var(--mono); letter-spacing: 0; color: var(--muted); white-space: nowrap; }
+#flores .rk { grid-template-columns: 34px 160px minmax(0, 1fr) 130px; }
+
 @media (max-width: 800px) {
+  #flores .rk { grid-template-columns: 26px minmax(0, 1fr) 110px; }
   .lang { margin-left: auto; }
   .lang + .theme { margin-left: 0; }
 }

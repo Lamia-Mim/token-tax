@@ -1,3 +1,6 @@
 node_modules/
-package-lock.json
-package.json
+/package.json
+/package-lock.json
+research/.cache/
+research/flores200_dataset/
+research/flores200_dataset.tar.gz

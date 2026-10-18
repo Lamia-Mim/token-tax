@@ -1,11 +1,11 @@
 # Token Tax: Bangla vs English in AI
 
-**Does it cost more to talk to AI in Bangla than in English? Yes, often about 5 times more.**
-This website lets anyone see that for themselves, live in the browser.
+**Does it cost more to talk to AI in Bangla than in English? Yes. With many popular models, about 5 to 6 times more.**
+This website lets anyone see that for themselves, live in the browser, and a [research study](research/) on 1,012 professionally translated sentences backs it up.
 
-### 👉 [Open the live website](https://lamia-mim.github.io/token-tax/)
+### 👉 [Open the live website](https://lamia-mim.github.io/token-tax/) · 📄 [Read the research report](research/)
 
-![Token Tax home page: "Speaking বাংলা to AI can cost up to 5× more", with a tax invoice showing the same sentence costs ৳100 in English and ৳585 in Bangla](docs/hero.png)
+![Token Tax home page: "Speaking বাংলা to AI can cost over 5× more", with a tax invoice showing the same sentence costs ৳100 in English and ৳585 in Bangla](docs/hero.png)
 
 ![The problem in 3 steps: "language" is 1 token, "ভাষা" is 5 tokens, so the same word costs 5 times more](docs/how.png)
 
@@ -34,32 +34,36 @@ I call this extra cost the **"token tax"**. In 1952, people in what is now Bangl
 
 ## What I found
 
-I compared 8 popular AI models on 8 sentences, each written in both Bangla and English. The number shows how many Bangla tokens each model needs for every English token. **1.00× would be perfectly fair.**
+I compared 8 popular AI models on **FLORES-200**, a standard research benchmark of 1,012 sentences professionally translated from English into Bangla. The number shows how many Bangla tokens each model needs for every English token. **1.00× would be perfectly fair.**
 
-| Model | Made by | Bangla vs English |
-|---|---|---|
-| GPT-4 / GPT-3.5 | OpenAI | **5.22×** |
-| Llama 3 | Meta | 5.14× |
-| Qwen 3 | Alibaba | 4.47× |
-| Mistral 7B | Mistral AI | 4.40× |
-| Gemma 2 | Google | 2.50× |
-| DeepSeek-V3 | DeepSeek | 2.03× |
-| GPT-4o | OpenAI | 1.52× |
-| BLOOM | BigScience | **1.00×** |
+| Model | Made by | Bangla vs English | 95% confidence interval | Website demo (8 sentences) |
+|---|---|---|---|---|
+| GPT-4 / GPT-3.5 | OpenAI | **5.80×** | 5.73–5.86 | 5.22× |
+| Llama 3 | Meta | 5.75× | 5.69–5.82 | 5.14× |
+| Qwen 3 | Alibaba | 5.02× | 4.96–5.08 | 4.47× |
+| Mistral 7B | Mistral AI | 4.90× | 4.84–4.96 | 4.40× |
+| Gemma 2 | Google | 2.68× | 2.65–2.71 | 2.50× |
+| DeepSeek-V3 | DeepSeek | 2.01× | 1.99–2.03 | 2.03× |
+| GPT-4o | OpenAI | 1.69× | 1.68–1.71 | 1.52× |
+| BLOOM | BigScience | **1.17×** | 1.16–1.18 | 1.00× |
+
+![Bangla tokens per English token on FLORES-200, with 95% confidence intervals](research/results/parity_devtest.svg)
 
 **Key takeaways**
 
-1. Most popular models need **4 to 5 times more tokens** for Bangla.
-2. Things are improving. OpenAI's newer GPT-4o cut the gap from about 5× to about 1.5×.
-3. **BLOOM is fair (1.00×).** Its tokenizer was built from training data that deliberately included Bangla, which suggests the gap comes from what a model learns from, not from the language itself.
+1. Most popular models need **about 5 to 6 times more tokens** for Bangla. GPT-4 uses about 8 tokens for an average Bangla word, and 1.2 for an English one.
+2. Things are improving. OpenAI's newer GPT-4o cut the gap from 5.8× to 1.7×.
+3. **BLOOM comes closest to fair (1.17×).** Its tokenizer was built from training data that deliberately included Bangla, which suggests the gap comes from what a model learns from, not from the language itself.
+4. **It is not a fluke.** For 6 of the 8 models, Bangla needs more tokens in at least 99.5% of sentences, and the result repeats on a second set of 997 sentences.
 
-> These results come from a small set of 8 sentence pairs written for this demo (not professional translations), so treat them as an early signal, not a final answer. A larger study is planned (see the Roadmap section below).
+The short demo sentences on the website give the same ranking with slightly smaller numbers, so the demo understates the gap rather than exaggerating it. Full method, results and limitations: **[research report](research/)**.
 
 ### How do we know the numbers are right?
 
 - **Anyone can repeat them.** A tokenizer always gives the same count for the same text. The site's *Check it yourself* box gives you the exact text to paste into [OpenAI's own tokenizer](https://platform.openai.com/tokenizer) and the number you should see.
-- **Cross-checked with OpenAI.** The GPT-4 and GPT-4o counts were compared with OpenAI's published encodings (`cl100k_base`, `o200k_base`) using js-tiktoken: **16 of 16 counts match**.
-- **Raw data is downloadable.** Every sentence, model and count is one click away as a CSV file.
+- **Cross-checked with OpenAI.** The GPT-4 and GPT-4o counts were compared with OpenAI's published encodings (`cl100k_base`, `o200k_base`) using js-tiktoken: **16 of 16** demo counts and **8,036 of 8,036** FLORES-200 counts match.
+- **Reproducible.** Every tokenizer is pinned to an exact version, and one script ([`research/run.mjs`](research/run.mjs)) regenerates every number.
+- **Raw data is downloadable.** Every sentence, model and count is available as a CSV file, on the website and in [`research/results/`](research/results/).
 - **Each claim is labelled by strength:** *Measured* (more tokens for Bangla), *Documented* (APIs bill per token), or *Expected* (slower replies and less memory, which follow from the counts but are not measured here yet).
 - **Earlier research found the same problem** for many languages: [Petrov et al., 2023](https://arxiv.org/abs/2305.15425), [Ahia et al., 2023](https://arxiv.org/abs/2305.13707), [Rust et al., 2021](https://arxiv.org/abs/2012.15613).
 
@@ -128,6 +132,10 @@ token-tax/
 ├── samples.js              the 8 Bangla–English sentence pairs
 ├── precomputed.js          generated results for the samples
 ├── scripts/precompute.mjs  regenerates precomputed.js
+├── research/               FLORES-200 study: report, script, results
+│   ├── README.md           the report
+│   ├── run.mjs             runs the whole study
+│   └── results/            per-sentence counts, summary, chart
 └── docs/                   screenshots for this README
 ```
 
@@ -164,7 +172,7 @@ A tax invoice printed on Ekushey-poster paper: paper white, ink black, Shaheed M
 
 ## Limitations
 
-- Only 8 sentence pairs, written for this demo and not professionally translated. Results can change with other text.
+- The website demo uses 8 short sentence pairs written for it, not professional translations. The FLORES-200 study covers this, but FLORES sentences are formal text translated from English, so everyday or social-media Bangla may behave differently.
 - Only the GPT-4 and GPT-4o counts have been cross-checked against the company's official encodings. The other tokenizers come from Hugging Face (some official, some community copies).
 - Speed and memory effects are expected from the token counts but not measured yet.
 - Token count is one part of fairness. It does not measure how *well* a model understands Bangla.
@@ -172,13 +180,15 @@ A tax invoice printed on Ekushey-poster paper: paper white, ink black, Shaheed M
 
 ## Roadmap
 
-- [ ] Run the full study on the FLORES-200 benchmark (1,000+ professionally translated sentences)
+- [x] Run the full study on the FLORES-200 benchmark ([report](research/))
+- [ ] Measure the real effects: billed tokens from AI APIs, reply speed, and how much fits in the context window
+- [ ] Test everyday Bangla (social media, chat) and Banglish (Bangla in Latin letters)
 - [ ] Compare other South Asian languages (Hindi, Urdu, Tamil, Nepali)
 - [ ] Test whether adding Bangla tokens to a tokenizer reduces the gap
 
 ## বাংলায় সংক্ষেপে
 
-ChatGPT-এর মতো AI লেখা পড়ে ছোট ছোট টুকরো করে, যাকে বলে টোকেন। প্রতিটি টোকেনের জন্য টাকা দিতে হয়। একই বাক্য বাংলায় লিখলে বেশিরভাগ AI সেটাকে ইংরেজির চেয়ে অনেক বেশি টুকরো করে, যেমন GPT-4-এ প্রায় ৫ গুণ। ফলে বাংলাভাষীদের একই কাজের জন্য বেশি খরচ হয়, উত্তর আসতে বেশি সময় লাগে, আর AI একসাথে কম লেখা পড়তে পারে। এই ওয়েবসাইটে যে কেউ নিজের বাংলা লেখা দিয়ে বিষয়টা নিজের চোখে দেখতে পারেন।
+ChatGPT-এর মতো AI লেখা পড়ে ছোট ছোট টুকরো করে, যাকে বলে টোকেন। প্রতিটি টোকেনের জন্য টাকা দিতে হয়। একই বাক্য বাংলায় লিখলে বেশিরভাগ AI সেটাকে ইংরেজির চেয়ে অনেক বেশি টুকরো করে, যেমন GPT-4-এ প্রায় ৬ গুণ (পেশাদারভাবে অনূদিত ১,০১২টি বাক্যে মাপা)। ফলে বাংলাভাষীদের একই কাজের জন্য বেশি খরচ হয়, উত্তর আসতে বেশি সময় লাগে, আর AI একসাথে কম লেখা পড়তে পারে। এই ওয়েবসাইটে যে কেউ নিজের বাংলা লেখা দিয়ে বিষয়টা নিজের চোখে দেখতে পারেন।
 
 ## About
 

@@ -28,7 +28,7 @@ const sampleIndex = {
   en: new Map(SAMPLES.map((s, i) => [s.en, i])),
 };
 
-const state = { sample: 0, cutId: "gpt-4", lang: "en", cutPieces: { bn: [], en: [] }, inspect: null };
+const state = { sample: 0, cutId: "gpt-4", lang: "en", cutPieces: { bn: [], en: [] }, inspect: null, flores: null };
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -70,6 +70,7 @@ function applyLanguage() {
   renderSteps();
   renderRanking();
   renderHeat();
+  renderFlores();
   renderSources();
   $("#m-n").textContent = SAMPLES.length;
   document.querySelectorAll(".pill").forEach((b) => { b.textContent = topic(SAMPLES[Number(b.dataset.i)]); });
@@ -345,6 +346,28 @@ function renderRanking() {
   $("#n-samples").textContent = SAMPLES.length;
 }
 
+// FLORES-200 study results (research/results/summary.json), loaded at start-up.
+function renderFlores() {
+  const box = $("#flores");
+  if (!state.flores) { box.hidden = true; return; }
+  box.hidden = false;
+  const demo = Object.fromEntries(RANKING.map(({ m, r }) => [m.id, r]));
+  const rows = state.flores.filter((r) => r.split === "devtest").sort((a, b) => b.parity - a.parity);
+  const max = Math.ceil(Math.max(...rows.map((r) => r.ci_high)));
+  const pct = (v) => (v / max) * 100;
+  box.innerHTML = rows.map((r, i) => `
+    <div class="rk">
+      <span class="rk__pos">${String(i + 1).padStart(2, "0")}</span>
+      <div class="rk__name">${esc(r.model)}<small>${esc(byId[r.id].org)}</small></div>
+      <div class="rk__track" aria-hidden="true">
+        <div class="rk__fill" style="--w:${pct(r.parity)}%"></div>
+        <div class="rk__ci" style="--l:${pct(r.ci_low)}%; --r:${pct(r.ci_high)}%"></div>
+        <div class="rk__par" style="--par:${pct(1)}%"><span>${t("fair")}</span></div>
+      </div>
+      <div class="rk__val">${times(r.parity)}<small>95% CI ${r.ci_low.toFixed(2)}–${r.ci_high.toFixed(2)}</small><small>${t("floresDemo", times(demo[r.id]))}</small></div>
+    </div>`).join("");
+}
+
 function renderHeat() {
   const head = `<thead><tr><th></th>${SAMPLES.map((s, i) => `<th scope="col" title="${esc(s.bn)}">${i + 1}<small>${esc(topic(s))}</small></th>`).join("")}</tr></thead>`;
   const body = RANKING.map(({ m }) => {
@@ -362,7 +385,8 @@ function renderHeat() {
 
 /* ---------- Render: hero receipt ---------- */
 function renderHero() {
-  $("#hero-x").textContent = `${Math.round(RANKING[0].r)}×`;
+  // Rounded down: the headline says "over N×".
+  $("#hero-x").textContent = `${Math.floor(RANKING[0].r)}×`;
 
   // Receipt: the first sample, billed by the GPT-4 tokenizer.
   const m = byId["gpt-4"];
@@ -606,6 +630,11 @@ function init() {
   try { saved = localStorage.getItem("tt-lang"); } catch {}
   state.lang = saved === "bn" ? "bn" : "en";
   applyLanguage();
+
+  fetch("research/results/summary.json")
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
+    .then((j) => { state.flores = j.results; renderFlores(); })
+    .catch((err) => console.warn("FLORES results unavailable", err));
 }
 
 init();
