@@ -27,7 +27,8 @@
         <a href="#calc">Calculator</a>
         <a href="#split">Under the knife</a>
         <a href="#ranking">Ranking</a>
-        <a href="#why">Why</a>
+        <a href="#proof">Proof</a>
+        <a href="#faq">FAQ</a>
       </nav>
       <button class="theme" id="theme" type="button" aria-label="Toggle light and dark theme">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-moon" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/><g class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>
@@ -41,16 +42,16 @@
       <div class="hero__copy">
         <p class="kicker"><span class="kicker__dot"></span>A study on language fairness in AI</p>
         <h1 class="hero__title">
-          Speaking <span class="hero__bn">বাংলা</span> to AI costs <span class="stamp" id="hero-x">5×</span> more.
+          Speaking <span class="hero__bn">বাংলা</span> to AI can cost up to <span class="stamp" id="hero-x">5×</span> more.
         </h1>
         <p class="hero__lead">
           AI models read text in small pieces called <strong>tokens</strong>, and every token is billed.
-          The same sentence in Bangla is cut into far more pieces than in English, so Bangla speakers pay more,
-          wait longer, and fit less into the model's memory.
+          The same sentence in Bangla is cut into far more pieces than in English. That can mean paying more,
+          waiting longer, and fitting less into the model's memory.
         </p>
         <div class="hero__cta">
           <a class="btn btn--red" href="#calc">Try your own text</a>
-          <a class="btn btn--line" href="#ranking">See the ranking</a>
+          <a class="btn btn--line" href="#proof">See the proof</a>
         </div>
       </div>
 
@@ -78,6 +79,37 @@
         <span><b class="bn">২০২৬</b> AI still charges extra for it</span><i>✦</i>
       </div>
     </div>
+
+    <!-- How it works -->
+    <section class="section wrap" id="how" aria-labelledby="how-h">
+      <header class="sec">
+        <div>
+          <h2 id="how-h" class="sec__title">The problem in 3 steps</h2>
+          <p class="sec__desc">One word is enough to see it. Both words below mean the same thing.</p>
+        </div>
+      </header>
+      <ol class="steps">
+        <li class="step">
+          <span class="step__n">1</span>
+          <h3>AI reads text in pieces</h3>
+          <p>Before a model can read anything, it cuts the text into <b>tokens</b>. A common English word is usually a single piece.</p>
+          <div class="step__demo" id="step-en"></div>
+        </li>
+        <li class="step">
+          <span class="step__n">2</span>
+          <h3>Bangla is cut into more</h3>
+          <p>The same word in Bangla is broken into many more pieces. Some letters are even split into raw bytes.</p>
+          <div class="step__demo bn" id="step-bn"></div>
+        </li>
+        <li class="step">
+          <span class="step__n">3</span>
+          <h3>Every piece is billed</h3>
+          <p>AI companies charge per token. Same meaning, more pieces, higher price.</p>
+          <div class="step__demo step__bill" id="step-bill"></div>
+        </li>
+      </ol>
+      <p class="fine" id="step-note">Example measured with GPT-4's tokenizer.</p>
+    </section>
 
     <!-- Calculator -->
     <section class="section wrap" id="calc" aria-labelledby="calc-h">
@@ -115,6 +147,24 @@
         </div>
         <div id="ledger-rows"></div>
       </div>
+
+      <div class="verify" id="verify">
+        <div class="verify__text">
+          <h3>Check it yourself</h3>
+          <p>You don't have to trust this site. Paste the same text into OpenAI's own tokenizer and compare the numbers.</p>
+          <ol class="verify__steps">
+            <li>Copy the Bangla text, then the English text.</li>
+            <li>Open OpenAI's tokenizer and pick the matching model.</li>
+            <li>You should see: <span id="verify-nums"></span></li>
+          </ol>
+        </div>
+        <div class="verify__actions">
+          <button class="load" type="button" data-copy="bn">Copy Bangla</button>
+          <button class="load" type="button" data-copy="en">Copy English</button>
+          <a class="btn btn--line verify__open" href="https://platform.openai.com/tokenizer" target="_blank" rel="noopener">Open OpenAI tokenizer ↗</a>
+          <button class="load" type="button" id="dl-current">Download this result (CSV)</button>
+        </div>
+      </div>
     </section>
 
     <!-- Split -->
@@ -128,7 +178,12 @@
       </header>
 
       <div class="tabs" id="tabs" role="tablist" aria-label="Choose a model"></div>
-      <div class="cut">
+      <label class="toggle">
+        <input type="checkbox" id="show-ids">
+        <span class="toggle__box" aria-hidden="true"></span>
+        Show token IDs <small>the actual numbers the model receives, same as in official tools</small>
+      </label>
+      <div class="cut" id="cut">
         <div class="cut__stats" id="cut-stats"></div>
         <div class="cut__row">
           <span class="cut__lang bn">বাংলা</span>
@@ -154,10 +209,76 @@
       <p class="fine">Small hand-written sample set. A larger study on the FLORES-200 benchmark is planned.</p>
     </section>
 
+    <!-- Proof & method -->
+    <section class="section wrap" id="proof" aria-labelledby="proof-h">
+      <header class="sec">
+        <span class="sec__num bn" aria-hidden="true">০৪</span>
+        <div>
+          <h2 id="proof-h" class="sec__title">Proof &amp; method</h2>
+          <p class="sec__desc">What this site measures, what it doesn't, and how you can check every number.</p>
+        </div>
+      </header>
+
+      <h3 class="sub">How strong is each claim?</h3>
+      <div class="claims">
+        <article class="claim">
+          <span class="badge badge--measured">Measured</span>
+          <h4>Bangla needs more tokens than English for the same meaning.</h4>
+          <p>Counted on this page with each model's own tokenizer. Anyone can repeat it and get the same numbers.</p>
+        </article>
+        <article class="claim">
+          <span class="badge badge--doc">Documented</span>
+          <h4>More tokens cost more money.</h4>
+          <p>AI companies publish their prices per token: <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI</a>, <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">Google Gemini</a>, <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener">Anthropic</a>.</p>
+        </article>
+        <article class="claim">
+          <span class="badge badge--exp">Expected</span>
+          <h4>Slower replies and less room in the model's memory.</h4>
+          <p>Models write one token at a time and have token-based memory limits, so this follows from the counts. Not measured on this site yet.</p>
+        </article>
+      </div>
+
+      <h3 class="sub">How the numbers are made</h3>
+      <ol class="flow" aria-label="Your text goes to a tokenizer in your browser, becomes token IDs, which are counted and compared">
+        <li>Your text</li>
+        <li>Tokenizer <small>runs in your browser</small></li>
+        <li>Token IDs</li>
+        <li>Count</li>
+        <li>Compare</li>
+      </ol>
+      <dl class="method">
+        <div><dt>Data</dt><dd><span id="m-n">8</span> Bangla–English sentence pairs on everyday topics, written for this demo. They are not professional translations.</dd></div>
+        <div><dt>What is counted</dt><dd>The tokens each tokenizer produces for the text, without the special start and end tokens.</dd></div>
+        <div><dt>The ratio</dt><dd>Total Bangla tokens ÷ total English tokens across all pairs. 1× means equal treatment.</dd></div>
+        <div><dt>Verified</dt><dd>GPT-4 and GPT-4o counts were cross-checked against OpenAI's published encodings (<code>cl100k_base</code>, <code>o200k_base</code>) using js-tiktoken: <b>16 of 16 counts match</b>.</dd></div>
+        <div><dt>Measured</dt><dd id="m-date">October 2026</dd></div>
+        <div><dt>Privacy</dt><dd>Nothing you type is sent anywhere. Only the tokenizer files are downloaded.</dd></div>
+      </dl>
+
+      <h3 class="sub">Tokenizers used</h3>
+      <div class="src" id="sources"></div>
+
+      <div class="downloads">
+        <div>
+          <h3>Get the raw data</h3>
+          <p>Every sentence, every model, every count. Open it in Excel or Google Sheets and check the math yourself.</p>
+        </div>
+        <button class="btn btn--red" type="button" id="dl-all">Download sample data (CSV)</button>
+      </div>
+
+      <h3 class="sub">Earlier research on the same problem</h3>
+      <ul class="refs">
+        <li><a href="https://arxiv.org/abs/2305.15425" target="_blank" rel="noopener">Language Model Tokenizers Introduce Unfairness Between Languages</a><span>Petrov et al., NeurIPS 2023</span></li>
+        <li><a href="https://arxiv.org/abs/2305.13707" target="_blank" rel="noopener">Do All Languages Cost the Same? Tokenization in the Era of Commercial Language Models</a><span>Ahia et al., EMNLP 2023</span></li>
+        <li><a href="https://arxiv.org/abs/2012.15613" target="_blank" rel="noopener">How Good is Your Tokenizer? On the Monolingual Performance of Multilingual Language Models</a><span>Rust et al., ACL 2021</span></li>
+      </ul>
+      <p class="fine">This site applies those ideas to Bangla with current models and makes the result something anyone can try.</p>
+    </section>
+
     <!-- Why -->
     <section class="section wrap" id="why" aria-labelledby="why-h">
       <header class="sec">
-        <span class="sec__num bn" aria-hidden="true">০৪</span>
+        <span class="sec__num bn" aria-hidden="true">০৫</span>
         <div>
           <h2 id="why-h" class="sec__title">Why it matters</h2>
         </div>
@@ -166,16 +287,19 @@
       <div class="why">
         <article class="why__card">
           <span class="why__n bn" aria-hidden="true">১</span>
+          <span class="badge badge--doc">Documented</span>
           <h3>Higher cost</h3>
           <p>AI APIs bill per token. If a Bangla message needs 5× the tokens, a Bangladeshi startup pays 5× for the same feature.</p>
         </article>
         <article class="why__card">
           <span class="why__n bn" aria-hidden="true">২</span>
+          <span class="badge badge--exp">Expected</span>
           <h3>Slower replies</h3>
           <p>Models write one token at a time. More tokens for the same answer means people writing in Bangla wait longer.</p>
         </article>
         <article class="why__card">
           <span class="why__n bn" aria-hidden="true">৩</span>
+          <span class="badge badge--exp">Expected</span>
           <h3>Less memory</h3>
           <p>A model's context window is measured in tokens. Bangla fills it faster, so the model can read less of your document.</p>
         </article>
@@ -184,6 +308,50 @@
       <div class="cause">
         <h3>So why does it happen?</h3>
         <p>Tokenizers learn their vocabulary from training text that is mostly English, so common English words become a single token. Bangla is rare in that text, and every Bangla letter takes 3 bytes in UTF-8. The tokenizer often has no piece for it and falls back to raw bytes, splitting a single <span class="bn">ক</span> into two or three tokens. Newer tokenizers with larger, more multilingual vocabularies, like GPT-4o's, close much of the gap.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section wrap" id="faq" aria-labelledby="faq-h">
+      <header class="sec">
+        <span class="sec__num bn" aria-hidden="true">০৬</span>
+        <div>
+          <h2 id="faq-h" class="sec__title">Questions</h2>
+        </div>
+      </header>
+      <div class="faq">
+        <details>
+          <summary>What is a token, in plain words?</summary>
+          <p>A small piece of text. AI models never see whole sentences; they see a list of numbered pieces. In English a piece is often a whole word. In Bangla it is often a part of a letter.</p>
+        </details>
+        <details>
+          <summary>Is my text sent to a server or to an AI company?</summary>
+          <p>No. Counting happens inside your browser. The site only downloads each model's tokenizer file (its "dictionary") from Hugging Face. Your text stays on your device.</p>
+        </details>
+        <details>
+          <summary>Are these the real tokenizers the companies use?</summary>
+          <p>Yes, but some come from community copies on Hugging Face rather than the company itself; the "Tokenizers used" table marks which. GPT-4 and GPT-4o were checked against OpenAI's published encodings and all 16 counts matched. You can check any GPT number with the "Check it yourself" box.</p>
+        </details>
+        <details>
+          <summary>Does more tokens mean the AI understands Bangla worse?</summary>
+          <p>Not necessarily. This site measures cost in tokens, not understanding. Research has found that poor tokenization can hurt quality too, but that is a separate question this site doesn't test.</p>
+        </details>
+        <details>
+          <summary>Why is BLOOM fair?</summary>
+          <p>BLOOM's tokenizer was trained on data that deliberately included Bangla and other Indian languages, so it learned whole Bangla words as pieces. It suggests the gap comes from what a tokenizer learns from, not from the language itself.</p>
+        </details>
+        <details>
+          <summary>Why only 8 sentences? Is that enough?</summary>
+          <p>It is enough to show the effect clearly, but not enough for a final scientific answer. A larger study using FLORES-200, a standard benchmark of 1,000+ professionally translated sentences, is planned.</p>
+        </details>
+        <details>
+          <summary>Does the ৳ figure show real prices?</summary>
+          <p>No. It is a comparison: if a message costs ৳100 in English, how much would the same message cost in Bangla on the same model. Real prices differ by model and change over time.</p>
+        </details>
+        <details>
+          <summary>Who made this, and why?</summary>
+          <p>Lamia Islam Mim, a Computer Science graduate from North South University in Dhaka. The goal is to make a hidden cost visible, so Bangladeshi developers can plan for it and more people ask for AI that treats Bangla fairly.</p>
+        </details>
       </div>
     </section>
   </main>

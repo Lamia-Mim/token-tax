@@ -5,7 +5,9 @@ This website lets anyone see that for themselves, live in the browser.
 
 ### 👉 [Open the live website](https://lamia-mim.github.io/token-tax/)
 
-![Token Tax home page: "Speaking বাংলা to AI costs 5× more", with a tax invoice showing the same sentence costs ৳100 in English and ৳585 in Bangla](docs/hero.png)
+![Token Tax home page: "Speaking বাংলা to AI can cost up to 5× more", with a tax invoice showing the same sentence costs ৳100 in English and ৳585 in Bangla](docs/hero.png)
+
+![The problem in 3 steps: "language" is 1 token, "ভাষা" is 5 tokens, so the same word costs 5 times more](docs/how.png)
 
 ---
 
@@ -51,7 +53,15 @@ I compared 8 popular AI models on 8 sentences, each written in both Bangla and E
 2. Things are improving. OpenAI's newer GPT-4o cut the gap from about 5× to about 1.5×.
 3. **BLOOM is fair (1.00×).** Its tokenizer was built from training data that deliberately included Bangla, which suggests the gap comes from what a model learns from, not from the language itself.
 
-> These results come from a small set of 8 sentences I wrote for this project, so treat them as an early signal, not a final answer. A larger study is planned (see the Roadmap section below).
+> These results come from a small set of 8 sentence pairs written for this demo (not professional translations), so treat them as an early signal, not a final answer. A larger study is planned (see the Roadmap section below).
+
+### How do we know the numbers are right?
+
+- **Anyone can repeat them.** A tokenizer always gives the same count for the same text. The site's *Check it yourself* box gives you the exact text to paste into [OpenAI's own tokenizer](https://platform.openai.com/tokenizer) and the number you should see.
+- **Cross-checked with OpenAI.** The GPT-4 and GPT-4o counts were compared with OpenAI's published encodings (`cl100k_base`, `o200k_base`) using js-tiktoken: **16 of 16 counts match**.
+- **Raw data is downloadable.** Every sentence, model and count is one click away as a CSV file.
+- **Each claim is labelled by strength:** *Measured* (more tokens for Bangla), *Documented* (APIs bill per token), or *Expected* (slower replies and less memory, which follow from the counts but are not measured here yet).
+- **Earlier research found the same problem** for many languages: [Petrov et al., 2023](https://arxiv.org/abs/2305.15425), [Ahia et al., 2023](https://arxiv.org/abs/2305.13707), [Rust et al., 2021](https://arxiv.org/abs/2012.15613).
 
 ## How to use the website
 
@@ -66,16 +76,21 @@ When you type your own text, the site downloads the models' tokenizers (about 23
 
 | Section | What it shows |
 |---|---|
-| **The calculator** | Token counts and cost for your text, across all 8 models |
-| **Under the knife** | Each piece the model sees. A red number means one piece cost several tokens. |
+| **The problem in 3 steps** | One word, "language" vs "ভাষা": 1 token vs 5 tokens, and what that means for price |
+| **The calculator** | Token counts and cost for your text across all 8 models, plus a *Check it yourself* box and a CSV download of your result |
+| **Under the knife** | Each piece the model sees. A red number means one piece cost several tokens. A switch shows the actual token IDs. |
 | **The ranking** | All models ranked from least to most fair |
-| **Why it matters** | Cost, speed and memory, explained simply |
+| **Proof & method** | How strong each claim is, how the numbers are made, which tokenizer files were used, the raw data, and earlier research |
+| **Why it matters** | Cost, speed and memory, each labelled with how well it is proven |
+| **Questions** | Plain answers: what a token is, privacy, official tokenizers, why BLOOM is fair, and more |
 
 ![The calculator: Bangla and English text side by side, with a table of token counts for 8 models](docs/calc.png)
 
 ![Under the knife: GPT-4 cuts the Bangla sentence into 76 tokens, many single letters split into 2 pieces, while English takes 13](docs/split.png)
 
 ![The ranking: GPT-4 at 5.22× is least fair, BLOOM at 1.00× is fair](docs/ranking.png)
+
+![Proof & method: each claim labelled Measured, Documented or Expected, how the numbers are made, the tokenizer files used, a raw data download and earlier research](docs/proof.png)
 
 ---
 
@@ -147,7 +162,9 @@ A tax invoice printed on Ekushey-poster paper: paper white, ink black, Shaheed M
 
 ## Limitations
 
-- Only 8 sentence pairs, written by me. Results can change with other text.
+- Only 8 sentence pairs, written for this demo and not professionally translated. Results can change with other text.
+- Only the GPT-4 and GPT-4o counts have been cross-checked against the company's official encodings. The other tokenizers come from Hugging Face (some official, some community copies).
+- Speed and memory effects are expected from the token counts but not measured yet.
 - Token count is one part of fairness. It does not measure how *well* a model understands Bangla.
 - Token prices differ between models, so the ৳ figures compare Bangla with English **within** one model, not models with each other.
 

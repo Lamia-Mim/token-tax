@@ -1,20 +1,23 @@
 import { Tokenizer } from "https://cdn.jsdelivr.net/npm/@huggingface/tokenizers@0.2.0/dist/tokenizers.mjs";
 import { SAMPLES } from "./samples.js";
-import { PRECOMPUTED } from "./precomputed.js";
+import { PRECOMPUTED, WORDS } from "./precomputed.js";
 
 /* ---------- Models ---------- */
 // mb = size of tokenizer.json, shown so visitors know what they are downloading.
 // def = downloaded automatically once the visitor types their own text.
+// official = the repo belongs to the model's maker (otherwise a community copy).
 const MODELS = [
   { id: "gpt-4",    name: "GPT-4 / 3.5", org: "OpenAI · cl100k", repo: "Xenova/gpt-4",                mb: 4.2,  def: true },
   { id: "gpt-4o",   name: "GPT-4o",      org: "OpenAI · o200k",  repo: "Xenova/gpt-4o",               mb: 9.7,  def: true },
   { id: "llama3",   name: "Llama 3",     org: "Meta",            repo: "Xenova/llama3-tokenizer-new", mb: 9.1,  def: true },
   { id: "gemma2",   name: "Gemma 2",     org: "Google",          repo: "unsloth/gemma-2-2b",          mb: 17.5 },
-  { id: "qwen3",    name: "Qwen 3",      org: "Alibaba",         repo: "Qwen/Qwen3-0.6B",             mb: 11.4 },
-  { id: "deepseek", name: "DeepSeek-V3", org: "DeepSeek",        repo: "deepseek-ai/DeepSeek-V3",     mb: 7.8 },
+  { id: "qwen3",    name: "Qwen 3",      org: "Alibaba",         repo: "Qwen/Qwen3-0.6B",             mb: 11.4, official: true },
+  { id: "deepseek", name: "DeepSeek-V3", org: "DeepSeek",        repo: "deepseek-ai/DeepSeek-V3",     mb: 7.8,  official: true },
   { id: "mistral",  name: "Mistral 7B",  org: "Mistral AI",      repo: "Xenova/mistral-tokenizer-v3", mb: 2.0 },
   { id: "bloom",    name: "BLOOM",       org: "BigScience",      repo: "Xenova/bloom-560m",           mb: 14.5 },
 ];
+// Counts for these were cross-checked against OpenAI's published encodings.
+const VERIFIED = new Set(["gpt-4", "gpt-4o"]);
 const byId = Object.fromEntries(MODELS.map((m) => [m.id, m]));
 
 const CACHE = "token-tax-v1";
@@ -33,7 +36,7 @@ const taka = (n) => `৳${Math.round(n).toLocaleString("en-IN")}`;
 const sum = (ps) => ps.reduce((a, p) => a + p.n, 0);
 
 /* ---------- Results (pre-computed or live) ---------- */
-const toPieces = (arr) => arr.map(([text, n]) => ({ text, n }));
+const toPieces = (arr) => arr.map(([text, ids]) => ({ text, ids, n: ids.length }));
 
 // Benchmark ratio per model over every sample pair, from the pre-computed data.
 const RANKING = MODELS.map((m) => {
@@ -67,11 +70,11 @@ function piecesFromIds(m, ids, limit) {
     const full = dec(prev.concat(buf));
     const text = full.startsWith(prevText) ? full.slice(prevText.length) : dec(buf);
     if (!text.includes("�")) {
-      out.push({ text, n: buf.length });
+      out.push({ text, ids: buf, n: buf.length });
       prev = buf; prevText = dec(prev); buf = [];
     }
   }
-  if (buf.length && out.length < limit) out.push({ text: dec(buf), n: buf.length });
+  if (buf.length && out.length < limit) out.push({ text: dec(buf), ids: buf, n: buf.length });
   return out;
 }
 
@@ -196,8 +199,8 @@ function renderLedger(bnText, enText) {
 function pieceHtml(p) {
   let body = esc(p.text).replace(/ /g, '<span class="sp">·</span>').replace(/\n/g, '<span class="sp">↵</span>');
   if (!body) body = '<span class="sp">␣</span>';
-  const title = `${p.n} token${p.n > 1 ? "s" : ""}`;
-  return `<span class="pc${p.n > 1 ? " multi" : ""}" title="${title}">${body}${p.n > 1 ? `<sup>${p.n}</sup>` : ""}</span>`;
+  const title = `${p.n} token${p.n > 1 ? "s" : ""}: ${p.ids.join(", ")}`;
+  return `<span class="pc${p.n > 1 ? " multi" : ""}" title="${title}">${body}${p.n > 1 ? `<sup>${p.n}</sup>` : ""}<span class="pc__ids">${p.ids.join(" ")}</span></span>`;
 }
 
 function renderPieces(el, m, res, text) {
@@ -265,6 +268,91 @@ function renderHero() {
   $("#rc-tax").textContent = `+${taka(bill - 100)}`;
 }
 
+/* ---------- Render: 3 steps ---------- */
+function renderSteps() {
+  const en = toPieces(WORDS.en), bn = toPieces(WORDS.bn);
+  const enN = sum(en), bnN = sum(bn);
+  const word = (ps, n, cls = "") => `<span class="pieces ${cls}">${ps.map(pieceHtml).join("")}</span><span class="step__count">${n} token${n > 1 ? "s" : ""}</span>`;
+  $("#step-en").innerHTML = word(en, enN);
+  $("#step-bn").innerHTML = word(bn, bnN, "bn");
+  $("#step-bill").innerHTML = `
+    <span class="step__line"><span>${esc(WORDS.en.map((p) => p[0]).join(""))}</span><b>${taka(enN)}</b></span>
+    <span class="step__line bn"><span>${esc(WORDS.bn.map((p) => p[0]).join(""))}</span><b>${taka(bnN)}</b></span>
+    <span class="step__x">${bnN}× the price</span>`;
+  $("#step-note").textContent = `Measured with ${byId[WORDS.model].name}'s tokenizer, at an example rate of ৳1 per token.`;
+}
+
+/* ---------- Render: check it yourself ---------- */
+function renderVerify(bnText, enText) {
+  const parts = ["gpt-4", "gpt-4o"].map((id) => {
+    const m = byId[id];
+    const bn = result(m, "bn", bnText), en = result(m, "en", enText);
+    if (!bn || !en) return `<span class="na">load ${esc(m.name)} above to get its numbers</span>`;
+    return `<b>${esc(m.name)}</b> বাংলা <b>${bn.count}</b> · English <b>${en.count}</b>`;
+  });
+  $("#verify-nums").innerHTML = parts.join(" &nbsp;/&nbsp; ");
+}
+
+/* ---------- Render: tokenizer sources ---------- */
+function renderSources() {
+  $("#sources").innerHTML = `
+    <div class="src__row src__head"><span>Model</span><span>Tokenizer file</span><span>Source</span><span>Cross-checked</span></div>` +
+    MODELS.map((m) => `
+    <div class="src__row">
+      <span class="src__name">${esc(m.name)}<small>${esc(m.org)}</small></span>
+      <a href="https://huggingface.co/${m.repo}" target="_blank" rel="noopener">${esc(m.repo)}</a>
+      <span>${m.official ? "Official" : "Community copy"}</span>
+      <span>${VERIFIED.has(m.id) ? `<b class="ok">✓ matches OpenAI</b>` : "—"}</span>
+    </div>`).join("");
+}
+
+/* ---------- Downloads + copy ---------- */
+function toCsv(rows) {
+  const cell = (v) => { const s = String(v); return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  return rows.map((r) => r.map(cell).join(",")).join("\r\n");
+}
+
+function download(name, text) {
+  // BOM so Excel opens the Bangla text as UTF-8.
+  const url = URL.createObjectURL(new Blob(["﻿" + text], { type: "text/csv;charset=utf-8" }));
+  const a = Object.assign(document.createElement("a"), { href: url, download: name });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadAll() {
+  const rows = [["sample", "topic", "model", "tokenizer", "bangla_text", "english_text", "bangla_tokens", "english_tokens", "ratio"]];
+  SAMPLES.forEach((s, i) => MODELS.forEach((m) => {
+    const bn = sum(toPieces(PRECOMPUTED[m.id][i].bn)), en = sum(toPieces(PRECOMPUTED[m.id][i].en));
+    rows.push([i + 1, s.topic, m.name, m.repo, s.bn, s.en, bn, en, (bn / en).toFixed(3)]);
+  }));
+  download("token-tax-samples.csv", toCsv(rows));
+}
+
+function downloadCurrent() {
+  const bnText = $("#in-bn").value, enText = $("#in-en").value;
+  const rows = [["model", "tokenizer", "source", "bangla_text", "english_text", "bangla_tokens", "english_tokens", "ratio"]];
+  for (const m of MODELS) {
+    const bn = result(m, "bn", bnText), en = result(m, "en", enText);
+    if (!bn || !en) continue;
+    rows.push([m.name, m.repo, m.tok ? "live" : "saved", bnText, enText, bn.count, en.count, en.count ? (bn.count / en.count).toFixed(3) : ""]);
+  }
+  download("token-tax-result.csv", toCsv(rows));
+}
+
+async function copyText(btn, text) {
+  const label = btn.textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = "Copied ✓";
+  } catch {
+    btn.textContent = "Select and copy manually";
+  }
+  setTimeout(() => { btn.textContent = label; }, 1600);
+}
+
 /* ---------- Render loop ---------- */
 const graphemes = (() => {
   try { const s = new Intl.Segmenter("bn", { granularity: "grapheme" }); return (t) => [...s.segment(t)].length; }
@@ -281,6 +369,7 @@ function renderAll() {
   const custom = isCustom(bnText, enText);
   renderStatus(custom);
   renderLedger(bnText, enText);
+  renderVerify(bnText, enText);
   renderCut(bnText, enText);
 }
 
@@ -337,7 +426,16 @@ function init() {
   setupTheme();
   buildSamples();
   renderHero();
+  renderSteps();
   renderRanking();
+  renderSources();
+  $("#m-n").textContent = SAMPLES.length;
+
+  $("#show-ids").addEventListener("change", (e) => $("#cut").classList.toggle("show-ids", e.target.checked));
+  $("#dl-all").addEventListener("click", downloadAll);
+  $("#dl-current").addEventListener("click", downloadCurrent);
+  document.querySelectorAll("[data-copy]").forEach((b) =>
+    b.addEventListener("click", () => copyText(b, $(`#in-${b.dataset.copy}`).value)));
 
   let timer;
   const onInput = () => {
